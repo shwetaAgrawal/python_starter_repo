@@ -135,6 +135,11 @@ LOG_FORMAT=json LOG_LEVEL=DEBUG uv run python -c 'from example_pkg.logging_utils
 
 Tip: in VS Code, start "watch:all" to keep tests, lint, and types running on every file save.
 
+## Guides: Testing and TDD
+
+- Testing guidelines (LLM-friendly, factory fixtures, placement rules): [COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TESTS.md](./COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TESTS.md)
+- LLM-Oriented Test-Driven Development: [COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TDD.md](./COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TDD.md)
+
 ## Format on save
 
 The workspace settings enable format on save and apply Ruff fixes via code actions. You can still run `ruff format` from tasks if you prefer.
