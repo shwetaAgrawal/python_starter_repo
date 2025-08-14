@@ -22,18 +22,26 @@ A minimal Python project template with uv, pytest, mypy, Ruff, nbQA (for noteboo
 
 ## Layout
 ```
-_template-python-basic/
+python_starter_repo/
   ├─ pyproject.toml
-  ├─ .gitignore
   ├─ .vscode/
   │   └─ tasks.json
+  ├─ scripts/
+  │   ├─ rename_package.py
+  │   ├─ release_tag.sh
+  │   └─ zsh/
+  │       ├─ 10-env.zsh
+  │       ├─ 20-aliases.zsh
+  │       └─ 30-python.zsh
   ├─ src/
   │   └─ example_pkg/
   │       ├─ __init__.py
+  │       ├─ logging_utils.py
   │       └─ math_utils.py
   └─ tests/
-    ├─ conftest.py
-    └─ test_math_utils.py
+      ├─ conftest.py
+      ├─ test_logging_utils.py
+      └─ test_math_utils.py
 ```
 
 ## Getting started
@@ -61,6 +69,72 @@ uv run nbqa ruff --fix .
 code --list-extensions > /dev/null # warms VS Code CLI on first run (optional)
 ```
 
+## How to use this template (end-to-end)
+
+Follow these steps to enable all the built-ins (pre-commit, kernel, watchers, security, coverage, notebooks):
+
+1) Setup the project once
+  - In VS Code: Tasks → Run Task → "setup:project" (runs: uv sync → pre-commit install → ipykernel install)
+  - Or manually:
+
+```bash
+uv sync
+uv run pre-commit install
+uv run python -m ipykernel install --user --name "${PWD##*/}-venv" --display-name "Python (${PWD##*/} .venv)"
+```
+
+2) Rename the package (optional)
+  - Tasks → "rename:package" and enter your new package name (e.g., my_project)
+  - Or:
+
+```bash
+uv run python scripts/rename_package.py my_project
+```
+
+3) Start auto-watchers while you code
+  - Tasks → "watch:all" (runs tests, ruff format/check, mypy on changes)
+  - Stop with Tasks → "kill:watchers"
+
+4) One-shot verifications anytime
+  - Tasks → "verify" (ruff format → ruff check --fix → nbqa ruff --fix → mypy → pytest)
+
+5) Notebooks
+  - Create/open a .ipynb and pick kernel: "Python (<repo-name> .venv)"
+  - Lint notebooks: Tasks → "run:nbqa-ruff-check" or "run:nbqa-ruff-fix"
+  - Execute notebooks as tests: Tasks → "run:nbmake"
+
+6) Security and QA extras
+  - Vulnerability scan: Tasks → "run:pip-audit"
+  - Static security: Tasks → "run:bandit"
+
+7) Coverage and reports
+  - HTML coverage: Tasks → "run:pytest-htmlcov" → then "open:coverage"
+
+8) Parallel test run (optional)
+  - One-shot: Tasks → "run:pytest-parallel"
+  - Watch-mode: Tasks → "watch:pytest-parallel"
+
+9) Release tagging (optional)
+  - Ensure a clean git state (committed changes)
+  - Tasks → "release:tag" and provide a tag like v0.1.0
+
+That’s it—format-on-save and code actions will keep your code tidy; watchers will give fast feedback while you iterate.
+
+## Try it
+
+Quick smoke run and a tiny logging demo:
+
+```bash
+uv run pytest -q
+uv run mypy -p example_pkg
+uv run ruff check .
+
+# Logging demo (JSON format, DEBUG level)
+LOG_FORMAT=json LOG_LEVEL=DEBUG uv run python -c 'from example_pkg.logging_utils import get_logger; get_logger(__name__).debug("hello", extra={"user":"alice"})'
+```
+
+Tip: in VS Code, start "watch:all" to keep tests, lint, and types running on every file save.
+
 ## Format on save
 
 The workspace settings enable format on save and apply Ruff fixes via code actions. You can still run `ruff format` from tasks if you prefer.
@@ -68,19 +142,32 @@ The workspace settings enable format on save and apply Ruff fixes via code actio
 ## VS Code tasks
 Open the command palette → "Tasks: Run Task" and pick from:
 
+- setup:project — uv sync → pre-commit install → ipykernel install
 - run:pytest — run tests once
+- run:pytest-parallel — run tests in parallel using pytest-xdist (-n auto)
+- watch:pytest — run tests when files change
+- watch:pytest-parallel — same as above but parallel
 - run:mypy — type check (-p example_pkg)
+- watch:mypy — type check on changes
 - run:ruff-format — format Python files
 - run:ruff-check-fix — lint and auto-fix Python files
+- watch:ruff-format — auto-format on changes
+- watch:ruff-check-fix — auto-lint/fix on changes
+- watch:all — start all watchers (pytest, ruff, mypy)
+- kill:watchers — stop all watchers
 - run:nbqa-ruff-check — lint notebooks via nbQA+Ruff
 - run:nbqa-ruff-fix — auto-fix notebooks via nbQA+Ruff
-- run:pytest-parallel — run tests in parallel using pytest-xdist (-n auto)
 - run:nbmake — execute notebooks as tests (requires .ipynb files)
 - run:pytest-htmlcov — build HTML coverage report
-- open:coverage — open HTML coverage report in the browser (macOS `open`)
+- open:coverage — open HTML coverage report (macOS `open`)
 - run:pip-audit — scan for known vulnerabilities
 - run:bandit — static security analysis of Python code
 - run:pre-commit-all — run all pre-commit hooks on entire repo
+- run:uv-sync — ensure env is synced (same as `uv sync`)
+- run:pre-commit-install — install git hooks
+- run:ipykernel-install — register the venv as a Jupyter kernel
+- release:tag — prompt for a version and create a git tag via script
+- rename:package — rename `example_pkg` everywhere
 - verify — sequential: ruff format → ruff check --fix → nbqa ruff --fix → mypy → pytest
 - clean:ruff — remove Ruff caches
 - clean:pytest — remove pytest cache and coverage file
@@ -97,7 +184,7 @@ Docstrings
 
 ## CI: GitHub Actions
 
-This template includes a minimal workflow at `.github/workflows/ci.yml` which runs on pushes and PRs:
+This repository includes a minimal workflow at `.github/workflows/ci.yml` which runs on pushes and PRs:
 - Lint: `uv run ruff check .`
 - Type check: `uv run mypy -p example_pkg`
 - Tests: `uv run pytest -q`
@@ -157,6 +244,36 @@ uv run python -m ipykernel install --user \
 Notes:
 - The workspace setting selects `${workspaceFolder}/.venv/bin/python` by default, so terminals and the debugger use the venv.
 - If you rename the repo folder, you can re-run the kernel install command to update the display name.
+
+## Scripts
+
+- `scripts/rename_package.py` — Renames `src/example_pkg` to your package name and updates imports across `src/`, `tests/`, and common configs. Use via the task "rename:package" or:
+
+```bash
+uv run python scripts/rename_package.py my_project
+```
+
+- `scripts/release_tag.sh` — Creates and pushes an annotated git tag for the current commit. Use via the task "release:tag" or:
+
+```bash
+scripts/release_tag.sh v0.1.0
+```
+
+- `scripts/zsh/*.zsh` — Optional zsh helpers you can source from your shell startup (e.g. `~/.zshrc`). They add lightweight aliases, prefer the project venv/bin on PATH, and can auto-activate the venv.
+
+Example setup for zsh:
+
+```zsh
+# ~/.zshrc
+export PROJECT_DIR="$HOME/path/to/python_starter_repo"
+# Optional: auto-activate .venv when you cd into the project
+export TEMPLATE_AUTO_VENV=1
+
+# Source helper scripts
+for f in "$PROJECT_DIR/scripts/zsh/"*.zsh; do
+  source "$f"
+done
+```
 
 ## Rename the package
 This template uses `example_pkg`. To rename it automatically, use the built-in task:
