@@ -137,8 +137,7 @@ Tip: in VS Code, start "watch:all" to keep tests, lint, and types running on eve
 
 ## Guides: Testing and TDD
 
-- Testing guidelines (LLM-friendly, factory fixtures, placement rules): [COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TESTS.md](./COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TESTS.md)
-- LLM-Oriented Test-Driven Development: [COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TDD.md](./COPILOT_INSTRUCTIONS/COPILOT_INSTRUCTIONS_TDD.md)
+  - LLM Session Starter (pin this): [COPILOT_INSTRUCTIONS/1.STARTER_PROMPT.md](./COPILOT_INSTRUCTIONS/1.STARTER_PROMPT.md)
 
 ## Format on save
 
