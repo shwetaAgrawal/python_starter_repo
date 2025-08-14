@@ -1,5 +1,5 @@
 [project]
-name = "python-basic-template"
+name = "python-starter-repo-template"
 version = "0.1.0"
 description = "Starter Python project with uv, pytest, mypy, ruff, and VS Code tasks"
 readme = "README.md"

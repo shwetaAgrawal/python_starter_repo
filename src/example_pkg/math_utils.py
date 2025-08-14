@@ -1,3 +1,9 @@
+"""Tiny math utilities used in examples and tests.
+
+Currently provides:
+- add(a, b): return the sum of two integers.
+"""
+
 from __future__ import annotations
 
 

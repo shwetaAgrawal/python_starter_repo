@@ -18,6 +18,7 @@ Notes
     recommended).
 - Safe to run once on a fresh template clone. Back up if running on a modified project.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -33,7 +34,7 @@ REPLACEMENTS = [
     # (path, is_regex, patterns)
     # YAML/JSON/TOML and text files where package is referenced
     (".github/workflows/ci.yml", False, ["-p example_pkg"]),
-    (".pre-commit-config.yaml", False, ["args: [\"-p\", \"example_pkg\"]"]),
+    (".pre-commit-config.yaml", False, ['args: ["-p", "example_pkg"]']),
     (".vscode/tasks.json", False, ["mypy", "-p", "example_pkg"]),
     ("README.md", False, ["example_pkg"]),
 ]
@@ -114,9 +115,7 @@ def update_references(old_pkg: str, new_pkg: str) -> None:
 def main() -> None:
     """Program entry point: parse args, perform rename, and print next steps."""
     parser = argparse.ArgumentParser(
-        description=(
-            "Rename the template package and update references."
-        )
+        description=("Rename the template package and update references.")
     )
     parser.add_argument("new_package", help="New package name (e.g., my_project)")
     args = parser.parse_args()
