@@ -1,72 +1,41 @@
-Follow:
-COPILOT_INSTRUCTIONS_TESTS.md (placement rules, Proposed Test Cases, factories)
-COPILOT_INSTRUCTIONS_TDD.md (Red/Green/Refactor loop, quality gates)
-COPILOT_INSTRUCTIONS_GIT_HYGIENE.md (tiny commits, conventional commits, squash vs merge)
-Constraints:
-Start tests-first unless this is a spike; for spikes, convert to tests ASAP
-Keep changes minimal; no speculative features; respect file placement rules
-After each step, suggest a conventional commit message and list next micro-steps
-
-----------------------------------------------------------------------
-Tip: Keep those three files open side-by-side as your “rules of engagement.”
-
-vibe coding loop
-Setup once per spike
-
-Branch: spike/<topic> (or feat/<topic> if you already know the shape)
-Start watchers: “watch:all” (fast feedback) or run “verify” between commits
-Mode A: Spike-first (pure vibe)
-
-Proof-of-life (minimal script or function) to validate the idea
-Convert immediately to tests:
-Update “### Proposed Test Cases” comment with planned coverage
-Add failing tests only (Red)
-Minimal src to pass (Green)
-Refactor safely (Refactor)
-Commits: test → feat → refactor (see Git Hygiene)
-If spike got noisy, squash before PR
-Mode B: TDD-first (structured vibe)
-
-Red: add failing tests (use factories, parametrization ids)
-Green: minimal code to pass tests
-Refactor: no behavior change
-Repeat with tiny scope
+Start the session in your repo
+cd into the repo and launch the agent (exact command varies by install, e.g., “claude code” or your tooling’s agent command).
+Paste the entire 1.STARTER_PROMPT.md as the first message.
+Add a small kickoff with the Kickoff Template at the bottom of 1.STARTER_PROMPT.md:
+Goal, Mode (spike-first or TDD-first), Scope (tiny), and “Follow: Tests.md, TDD.md, Git Hygiene.md, Vibe Coding.md.”
 
 
-Red (tests only)
+Attach your rules
+Ask the agent to read the five instruction files by path and follow them strictly.
+Have it echo back your constraints (tests-first unless spike, Proposed Test Cases usage, minimal diffs, commit suggestion each step).
 
-“Update the ‘### Proposed Test Cases’ comment and add failing tests for: <behaviors>. Follow COPILOT_INSTRUCTIONS_TESTS.md (placement, factories, parametrization with ids). Don’t modify src yet.”
-Green (minimal implementation)
 
-“Implement only the minimal src changes to pass the new tests. No refactors or bonus features. Keep diffs small and call out any assumptions.”
-Refactor (no behavior change)
+Run in byte loops
+Red:
+Ask it to update “### Proposed Test Cases” in the target test file and add failing tests only.
+Require it to print a summary of file deltas and a conventional commit message proposal.
+Green:
+Ask for the minimal src edits to pass the tests, nothing extra.
+Require it to run (or simulate) the quality gates and report results.
+Refactor:
+Ask for behavior-preserving cleanup; same summary + commit message.
 
-“Refactor for clarity/DRY only. Ensure ruff/mypy/tests still pass per the TDD quality gates.”
-Commit helper
 
-“Propose a conventional commit message for this change (type(scope): summary, <=72 chars) with a one-line ‘why’ body.”
-Spike → tests conversion
+Approve/apply changes
+If your CLI supports interactive patch apply, approve in-session.
+If it only shows a unified diff, you can apply it yourself:
+Save diff to a file and apply:
+If a hunk fails, ask the agent to rebase the patch against HEAD.
 
-“Convert this working spike into tests per COPILOT_INSTRUCTIONS_TESTS.md. Add/mark items in the Proposed Test Cases, then guide a minimal src change to pass.”
 
-Using the guides at each step
-Tests guide (Tests.md)
+Run the gates locally between steps
 
-Use it when writing/placing tests, drafting Proposed Test Cases, and choosing factory fixtures vs local fixtures.
-TDD guide (TDD.md)
 
-Use it to keep you in Red/Green/Refactor and to enforce quality gates:
-uv run pytest -q
-uv run mypy -p example_pkg
-uv run ruff check --fix . && uv run ruff format .
-Git Hygiene (GIT_HYGIENE.md)
+Keep commits tiny and conventional
+Use the commit message it proposed (edit if needed).
+For spike branches: squash before merging; otherwise, preserve clean Red/Green/Refactor series.
 
-Use it to keep commits tiny, messages conventional, and choose squash vs merge:
-Squash noisy spike branches
-Preserve a clean Red/Green/Refactor series when it tells a good story
+Tips
 
-Definition of done (quick gate)
-Proposed Test Cases updated; new items tagged [IMPLEMENTED]
-Watchers or “verify” all green (tests, types, lint/format)
-Conventional commit message prepared
-If it started as a spike: either squash to a tidy PR or discard the branch cleanly
+If the agent is unsure, have it list assumptions and ask before proceeding.
+If a gate fails, allow up to two focused fixes; otherwise, stop and summarize options.
